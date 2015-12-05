@@ -1,11 +1,13 @@
 import turtle
 import random
 import time
+import sys
 
-boardSize = 550
-xvar = 50
-yvar = 50
-gridSize = 10
+gridSize = input("Gridsize : ")
+gridSize = int(gridSize)
+boardSize = 600
+xvar = int(boardSize/gridSize)
+yvar = int(boardSize/gridSize)
 
 fwdSlashFlag = 0b100000
 bckSlashFlag = 0b010000
@@ -19,6 +21,7 @@ colors = ["Blue", "Red"]
 
 score = [0, 0]
 rounds = 0
+AI_depth = 1
 
 def AI_player2(grid, depth) :
     max_weight = -10000
@@ -78,18 +81,15 @@ def weight_eval(grid, winner) :
     else :
         return score[1] - score[0]
    
-
-
-                
 def get_posY(row):
-    return boardSize/2 - row*50
+    return boardSize/2 - row*yvar + yvar/2
 
 def get_posX(col):
-    return col*50 - boardSize/2
+    return col*xvar - boardSize/2 - xvar/2
 
 def action_col_row(x, y):
-    col = (x + boardSize/2) / xvar
-    row = -(y - boardSize/2) / yvar
+    col = (x + boardSize/2 + xvar/2) / xvar
+    row = -(y - boardSize/2 - yvar/2) / yvar
 
     if abs(col - round(col)) > 0.2 or abs(row - round(row)) > 0.2 :
         print("Too far from grid")
@@ -100,7 +100,7 @@ def action_col_row(x, y):
             print ("No cheating!")
         else :
             check_win(grid, False)
-            AI_player2(grid, 2)
+            AI_player2(grid, AI_depth)
             pretty_print(grid)
 
 def play(player, row, col) :
@@ -145,6 +145,8 @@ def check_win(grid, check):
         if win != 0 : 
             break
     reset_flags(grid)
+    if not check and rounds == gridSize*gridSize :
+        end_game_draw()
     return win
 
 
@@ -227,7 +229,16 @@ def victory(player) :
     board.goto(0, 0)
     board.color("Lightgreen")
     board.write("Player " + str(player) + " wins !", align="center", font=("Arial", 48, "normal"))
-        
+    board.exitonclick()
+    sys.exit()
+
+def end_game_draw() :
+    board.ht()
+    board.goto(0, 0)
+    board.color("Lightgreen")
+    board.write("Draw !", align="center", font=("Arial", 48, "normal"))
+    board.exitonclick()
+    sys.exit()
 
 def draw_board(board):
     board.bgcolor(.55, .75, .65)
@@ -237,11 +248,11 @@ def draw_board(board):
     board.color(.1, .2, .25)
     for i in range(gridSize):
         board.setx(-boardSize/2)
-        board.sety(boardSize/2 - yvar*i - yvar)
+        board.sety(boardSize/2 - yvar*i - yvar/2)
         board.down()
         board.forward(boardSize)
         board.up()
-        board.setx(-boardSize/2 + xvar * i + xvar)
+        board.setx(-boardSize/2 + xvar * i + xvar/2)
         board.sety(boardSize/2)
         board.down()
         board.sety(-boardSize/2)
