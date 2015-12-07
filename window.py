@@ -3,6 +3,14 @@ import random
 import time
 import sys
 
+class Grid:
+    def __init__(self, size):
+        if self.wrong_size(size) :
+            sys.exit('Wrong value for grid size (', size, ')')
+        self.size = size
+        self.value = [[0 for i in range(size)] for i in range(size)]
+
+
 gridSize = input("Gridsize : ")
 gridSize = int(gridSize)
 boardSize = 600
@@ -21,7 +29,7 @@ colors = ["Blue", "Red"]
 
 score = [0, 0]
 rounds = 0
-AI_depth = 1
+AI_depth = 2
 
 def AI_player2(grid, depth) :
     max_weight = -10000
@@ -101,7 +109,7 @@ def action_col_row(x, y):
         else :
             check_win(grid, False)
             AI_player2(grid, AI_depth)
-            pretty_print(grid)
+            #pretty_print(grid)
 
 def play(player, row, col) :
     gridR = row - 1
